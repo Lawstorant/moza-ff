@@ -1225,7 +1225,11 @@ static int pidff_check_autocenter(struct pidff_device *pidff,
 	 * effect id is a built-in spring type effect used for autocenter
 	 */
 
-	error = pidff_request_effect_upload(pidff, 1);
+	unsigned short effect = 1;
+	if (pidff->quirks & PIDFF_QUIRK_AUTOCENTER_WITH_SPRING)
+		effect = FF_AUTOCENTER;
+
+	error = pidff_request_effect_upload(pidff, effect);
 	if (error) {
 		hid_err(pidff->hid, "upload request failed\n");
 		return error;

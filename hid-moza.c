@@ -53,6 +53,7 @@ static int moza_probe(struct hid_device *hdev,
 	unsigned quirks = 0;
 	quirks |= PIDFF_QUIRK_FIX_0_INFINITE_LENGTH;
 	quirks |= PIDFF_QUIRK_FIX_WHEEL_DIRECTION;
+	quirks |= PIDFF_QUIRK_AUTOCENTER_WITH_SPRING;
 
 	ret = hid_pidff_init_with_quirks(hdev, quirks);
 	if (ret) {
@@ -85,5 +86,6 @@ static struct hid_driver moza_ff = {
 module_hid_driver(moza_ff);
 
 MODULE_AUTHOR("Oleg Makarenko <oleg@makarenk.ooo>");
+MODULE_AUTHOR("Tomasz Pakuła <tomasz.pakula.oficjalny@gmail.com>");
 MODULE_DESCRIPTION("MOZA HID FF Driver");
 MODULE_LICENSE("GPL");
