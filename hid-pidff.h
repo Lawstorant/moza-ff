@@ -21,6 +21,12 @@
 */
 #define PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE BIT(2)
 
+/*
+ * Treat 0 magnitude in periodic effects as max
+ * This works similiar to the infinite length quirk
+*/
+#define PIDFF_QUIRK_FIX_0_PERIODIC_MAGNITUDE BIT(3)
+
 int hid_pidff_init(struct hid_device *hid);
 int hid_pidff_init_with_quirks(struct hid_device *hid, unsigned quirks);
 

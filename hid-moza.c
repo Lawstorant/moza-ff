@@ -54,6 +54,7 @@ static int moza_probe(struct hid_device *hdev,
 	quirks |= PIDFF_QUIRK_FIX_0_INFINITE_LENGTH;
 	quirks |= PIDFF_QUIRK_FIX_WHEEL_DIRECTION;
 	quirks |= PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE;
+	quirks |= PIDFF_QUIRK_FIX_0_PERIODIC_MAGNITUDE;
 
 	ret = hid_pidff_init_with_quirks(hdev, quirks);
 	if (ret) {

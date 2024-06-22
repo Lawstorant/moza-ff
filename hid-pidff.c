@@ -355,6 +355,10 @@ static int pidff_needs_set_effect(struct ff_effect *effect,
 static void pidff_set_periodic_report(struct pidff_device *pidff,
 				      struct ff_effect *effect)
 {
+	if (pidff->quirks & PIDFF_QUIRK_FIX_0_PERIODIC_MAGNITUDE &&
+	    effect->u.periodic.magnitude == 0)
+	    	effect->u.periodic.magnitude = 0x7fff;
+
 	pidff->set_periodic[PID_EFFECT_BLOCK_INDEX].value[0] =
 		pidff->block_load[PID_EFFECT_BLOCK_INDEX].value[0];
 	pidff_set_signed(&pidff->set_periodic[PID_MAGNITUDE],
@@ -649,9 +653,9 @@ static int pidff_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 		}
 
 		if (!old ||
-		    pidff_needs_set_envelope(&effect->u.periodic.envelope,
-					&old->u.periodic.envelope))
-			pidff_set_envelope_report(pidff,
+			pidff_needs_set_envelope(&effect->u.periodic.envelope,
+						 &old->u.periodic.envelope))
+				pidff_set_envelope_report(pidff,
 					&effect->u.periodic.envelope);
 		break;
 
