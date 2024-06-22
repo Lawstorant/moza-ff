@@ -308,12 +308,8 @@ static void pidff_set_effect_report(struct pidff_device *pidff,
 	if (pidff->quirks & PIDFF_QUIRK_FIX_0_INFINITE_LENGTH && length == 0)
 		length = 0xffff;
 
-	if ((effect->type == FF_DAMPER ||
-	    effect->type == FF_FRICTION ||
-	    effect->type == FF_SPRING ||
-	    effect->type == FF_INERTIA) &&
-	    pidff->quirks & PIDFF_QUIRK_FIX_WHEEL_DIRECTION)
-		direction = 0x3FFF;
+	if (pidff->quirks & PIDFF_QUIRK_FIX_WHEEL_DIRECTION)
+		direction = 0x4000;
 
 	pidff->set_effect[PID_EFFECT_BLOCK_INDEX].value[0] =
 		pidff->block_load[PID_EFFECT_BLOCK_INDEX].value[0];
