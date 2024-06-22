@@ -636,6 +636,18 @@ static int pidff_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 			pidff_set_effect_report(pidff, effect);
 		if (!old || pidff_needs_set_periodic(effect, old))
 			pidff_set_periodic_report(pidff, effect);
+
+		if (pidff->quirks & PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE)
+		{
+			effect->u.periodic.envelope.attack_level =
+				effect->u.periodic.envelope.attack_level == 0
+				? 1 : effect->u.periodic.envelope.attack_level;
+
+			effect->u.periodic.envelope.fade_level =
+				effect->u.periodic.envelope.fade_level == 0
+				? 1 : effect->u.periodic.envelope.fade_level;
+		}
+
 		if (!old ||
 		    pidff_needs_set_envelope(&effect->u.periodic.envelope,
 					&old->u.periodic.envelope))

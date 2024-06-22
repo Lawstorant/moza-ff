@@ -16,6 +16,11 @@
 */
 #define PIDFF_QUIRK_FIX_WHEEL_DIRECTION BIT(1)
 
+/*
+ * Always set a value > 0 for PERIODIC envelope attack and fade level
+*/
+#define PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE BIT(2)
+
 int hid_pidff_init(struct hid_device *hid);
 int hid_pidff_init_with_quirks(struct hid_device *hid, unsigned quirks);
 
