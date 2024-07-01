@@ -645,11 +645,11 @@ static int pidff_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 		{
 			effect->u.periodic.envelope.attack_level =
 				effect->u.periodic.envelope.attack_level == 0
-				? 1 : effect->u.periodic.envelope.attack_level;
+				? 0xffff : effect->u.periodic.envelope.attack_level;
 
 			effect->u.periodic.envelope.fade_level =
 				effect->u.periodic.envelope.fade_level == 0
-				? 1 : effect->u.periodic.envelope.fade_level;
+				? 0xffff : effect->u.periodic.envelope.fade_level;
 		}
 
 		if (!old ||
