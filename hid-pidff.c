@@ -815,13 +815,14 @@ static void pidff_set_wheel_autocenter(struct input_dev *dev, u16 magnitude)
 		trigger = {};
 		replay = {};
 		u.condition[0] = {
-			right_saturation = magnitude;
-			left_saturation = magnitude;
+			right_saturation = 0x7fff;
+			left_saturation = 0x7fff;
 			right_coeff = magnitude;
 			left_coeff = magnitude;
 			deadband = 0;
 			center = 0;
 		};
+		u.condition[1] = {};
 	};
 
 	// Upload spring effect
@@ -831,6 +832,8 @@ static void pidff_set_wheel_autocenter(struct input_dev *dev, u16 magnitude)
 	// Modify effect type and upload again
 	autocenter.id = -1;
 	autocenter.type = FF_FRICTION;
+	autocenter.u.condition[0].right_coeff = magnitude/2;
+	autocenter.u.condition[0].left_coeff = magnitude/2;
 	pidff_upload_effect(dev, &autocenter, NULL);
 	pidff->autocenter_effect_ids[1] = friction.id;
 
