@@ -785,6 +785,61 @@ static void pidff_set_autocenter(struct input_dev *dev, u16 magnitude)
 }
 
 /*
+ * pidff_set_wheel_autocenter() handler
+ * use spring and friction effects as autocenter 
+ */
+static void pidff_set_wheel_autocenter(struct input_dev *dev, u16 magnitude)
+{
+	struct pidff_device *pidff = dev->ff->private;
+
+	// remove autocenter effects if no longer required
+	if (!magnitude) {
+		unsigned short i = 0;
+		for (i; i < PID_AUTOCENTER_EFFECTS; i++)
+		{
+			pidff_erase_effect(dev, i);
+			pidff->autocenter_effect_ids[i] = -1;
+		}
+		return;
+	}
+
+	// Check if autocenter is already active
+	if (pidff->autocenter_effect_ids[0] > -1)
+		return;
+
+	// Create autocenter effects
+	ff_effect autocenter = {
+		type = FF_SPRING;
+		id = -1;
+		direction = 0x4000;
+		trigger = {};
+		replay = {};
+		u.condition[0] = {
+			right_saturation = magnitude;
+			left_saturation = magnitude;
+			right_coeff = magnitude;
+			left_coeff = magnitude;
+			deadband = 0;
+			center = 0;
+		};
+	};
+
+	// Upload spring effect
+	pidff_upload_effect(dev, &autocenter, NULL);
+	pidff->autocenter_effect_ids[0] = autocenter.id;
+
+	// Modify effect type and upload again
+	autocenter.id = -1;
+	autocenter.type = FF_FRICTION;
+	pidff_upload_effect(dev, &autocenter, NULL);
+	pidff->autocenter_effect_ids[1] = friction.id;
+
+	// Play autocenter effects
+	pidff_playback_pid(pidff, autocenter_effect_ids[0], 1);
+	pidff_playback_pid(pidff, autocenter_effect_ids[1], 1);
+}
+
+/*
  * Find fields from a report and fill a pidff_usage
  */
 static int pidff_find_fields(struct pidff_usage *usage, const u8 *table,
@@ -1390,9 +1445,16 @@ int hid_pidff_init_with_quirks(struct hid_device *hid, const struct hid_device_i
 
 	/* set quirks on the pidff device */
 	hid_device_io_start(hid);
-	pidff->quirks |= id->driver_data;
-	hid_device_io_stop(hid);
 
+	pidff->quirks |= id->driver_data;
+
+	if (pidff->quirks & PIDFF_QUIRK_USE_WHEEL_AUTOCENTER)
+	{
+		set_bit(FF_AUTOCENTER, dev->ffbit);
+		dev->ff->set_autocenter = pidff_set_wheel_autocenter;
+	}
+		
+	hid_device_io_stop(hid);
 	hid_dbg(dev, "Device quirks: %d\n", pidff->quirks);
 
  	return 0;

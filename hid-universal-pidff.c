@@ -14,15 +14,30 @@
 
 static const struct hid_device_id pidff_wheel_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R3),
-		.driver_data = PIDFF_QUIRK_FIX_WHEEL_DIRECTION | PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE },
+		.driver_data =
+			PIDFF_QUIRK_FIX_WHEEL_DIRECTION | 
+			PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE |
+			PIDFF_QUIRK_USE_WHEEL_AUTOCENTER },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R5),
-		.driver_data = PIDFF_QUIRK_FIX_WHEEL_DIRECTION | PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE },
+		.driver_data =
+			PIDFF_QUIRK_FIX_WHEEL_DIRECTION | 
+			PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE |
+			PIDFF_QUIRK_USE_WHEEL_AUTOCENTER },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R9),
-		.driver_data = PIDFF_QUIRK_FIX_WHEEL_DIRECTION | PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE },
+		.driver_data =
+			PIDFF_QUIRK_FIX_WHEEL_DIRECTION | 
+			PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE |
+			PIDFF_QUIRK_USE_WHEEL_AUTOCENTER },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R12),
-		.driver_data = PIDFF_QUIRK_FIX_WHEEL_DIRECTION | PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE },
+		.driver_data =
+			PIDFF_QUIRK_FIX_WHEEL_DIRECTION | 
+			PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE |
+			PIDFF_QUIRK_USE_WHEEL_AUTOCENTER },
 	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R16_R21),
-		.driver_data = PIDFF_QUIRK_FIX_WHEEL_DIRECTION | PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE },
+		.driver_data =
+			PIDFF_QUIRK_FIX_WHEEL_DIRECTION | 
+			PIDFF_QUIRK_FIX_PERIODIC_ENVELOPE |
+			PIDFF_QUIRK_USE_WHEEL_AUTOCENTER },
 	{ }
 };
 MODULE_DEVICE_TABLE(hid, pidff_wheel_devices);
@@ -31,9 +46,9 @@ MODULE_DEVICE_TABLE(hid, pidff_wheel_devices);
 static u8 *moza_report_fixup(struct hid_device *hdev, __u8 *rdesc,
                                         unsigned int *rsize)
 {
-		// Fix data type on PID Device Control
+	// Fix data type on PID Device Control
         if (rdesc[1002] == 0x91 && rdesc[1003] == 0x02) {
-			rdesc[1003] = 0x00; // Fix header, it needs to be Array.
+		rdesc[1003] = 0x00; // Fix header, it needs to be an Array.
         }
         return rdesc;
 }
@@ -42,10 +57,10 @@ static u8 *moza_report_fixup(struct hid_device *hdev, __u8 *rdesc,
 static u8 *universal_pidff_report_fixup(struct hid_device *hdev, __u8 *rdesc,
                                         unsigned int *rsize)
 {
-		if (hdev->vendor == USB_VENDOR_ID_MOZA) {
-			return moza_report_fixup(hdev, rdesc, rsize);
-		}
-		return rdesc;
+	if (hdev->vendor == USB_VENDOR_ID_MOZA) {
+		return moza_report_fixup(hdev, rdesc, rsize);
+	}
+	return rdesc;
 }
 
 
